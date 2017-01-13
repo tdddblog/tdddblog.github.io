@@ -1,13 +1,44 @@
 body {
     padding: 0;
     margin: 0;
+    
+    /*background: #a2d9ce; */
+    /*background: linear-gradient(to right bottom, #a2d9ce, #a9cce3) fixed;*/
+    
+    background: linear-gradient(to right bottom, #e8f8f5, #a9cce3) fixed;
 }
 
 div.siteHeader {
-    background-color: #0099ff;
+    background: linear-gradient(to right bottom, #293f50 , #648880) fixed;
+    
     padding: 0.5em;
     color: #ffffff;
     font-family: sans-serif, helvetica, arial;
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: normal;
+}
+
+img.circle {
+	border-radius: 50%;
+}
+
+div.summary-box {
+	border-radius: 6px;
+	background: linear-gradient(to right bottom, #a9cce3, #ffffff) fixed;
+	width: 30em;
+	font-family: sans-serif, helvetica, arial;
+}
+
+div.summary-box-green {
+	border-radius: 6px;
+	background: linear-gradient(to right bottom, #a9dfbf, #ffffff) fixed;
+	width: 30em;
+	font-family: sans-serif, helvetica, arial;
+}
+
+div.summary-box-orange {
+	border-radius: 6px;
+	background: linear-gradient(to right bottom, #f5b041, #ffffff) fixed;
+	width: 30em;
+	font-family: sans-serif, helvetica, arial;
 }
