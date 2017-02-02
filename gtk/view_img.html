@@ -5,7 +5,7 @@
 </head>
 
 <body>
-    <div class='siteHeader'>Computer Vision Tutorials</div>
+<div class='siteHeader' onclick="window.location.href='/'">Computer Vision Tutorials</div>
 
 <div style="padding:10px;">
 
@@ -25,7 +25,7 @@ Usually you create CMakeLists.txt file and configure your project there. We are 
 </p>
 
 <!-- HTML generated using hilite.me -->
-<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<div class="code">
 <pre style="margin: 0; line-height: 125%"><span style="color: #008000">project</span>(<span style="color: #BA2121">test</span>)
 <span style="color: #008000">cmake_minimum_required</span>(<span style="color: #BA2121">VERSION</span> <span style="color: #BA2121">2.6</span>)
 
@@ -50,7 +50,7 @@ Many common image formats, such as JPG or PNG are supported. The image is decomp
 Usually raster data is stored in RGB or RGBA format.
 </p>
 
-<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<div class="code">
 <pre style="margin: 0; line-height: 125%">GdkPixbuf <span style="color: #666666">*</span> <span style="color: #0000FF">read_image</span>(<span style="color: #008000; font-weight: bold">const</span> <span style="color: #B00040">char</span><span style="color: #666666">*</span> name)
 {
     GError <span style="color: #666666">*</span>err <span style="color: #666666">=</span> <span style="color: #008000">NULL</span>; 
@@ -77,7 +77,7 @@ Next, connect <b>&quot;destroy&quot;</b> signal to <b>gtk_main_quit</b> function
 Finally, create new image widget from Pixbuf and add it to the window.
 </p>
 
-<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<div class="code">
 <pre style="margin: 0; line-height: 125%">GtkWidget <span style="color: #666666">*</span> <span style="color: #0000FF">create_window</span>(GdkPixbuf <span style="color: #666666">*</span> buf)
 {
     GtkWidget <span style="color: #666666">*</span> window <span style="color: #666666">=</span> gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -99,7 +99,7 @@ Finally, create new image widget from Pixbuf and add it to the window.
 In the main function, we get an image file name from arguments, read the image and display it in a window.
 </p>
 
-<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<div class="code">
 <pre style="margin: 0; line-height: 125%"><span style="color: #B00040">int</span> <span style="color: #0000FF">main</span>(<span style="color: #B00040">int</span> argc, <span style="color: #008000; font-weight: bold">const</span> <span style="color: #B00040">char</span><span style="color: #666666">*</span> argv[])
 {
     <span style="color: #008000; font-weight: bold">if</span>(argc <span style="color: #666666">!=</span> <span style="color: #666666">2</span>)
@@ -135,7 +135,7 @@ The <b>GDK_INTERP_BILINEAR</b> parameter is used for bilinear interpolation.
 </p>
 
 <!-- HTML generated using hilite.me -->
-<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<div class="code">
 <pre style="margin: 0; line-height: 125%">GdkPixbuf <span style="color: #666666">*</span> <span style="color: #0000FF">resize_image</span>(GdkPixbuf <span style="color: #666666">*</span> buf, <span style="color: #B00040">int</span> max_width, <span style="color: #B00040">int</span> max_height)
 {
     <span style="color: #B00040">int</span> width <span style="color: #666666">=</span> gdk_pixbuf_get_width(buf);
@@ -174,7 +174,7 @@ We also have to fix the main function. Add <b>resize_image()</b> function before
 
 
 <!-- HTML generated using hilite.me -->
-<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<div class="code">
 <pre style="margin: 0; line-height: 125%"><span style="color: #B00040">int</span> <span style="color: #0000FF">main</span>(<span style="color: #B00040">int</span> argc, <span style="color: #008000; font-weight: bold">const</span> <span style="color: #B00040">char</span><span style="color: #666666">*</span> argv[])
 {
     <span style="color: #008000; font-weight: bold">if</span>(argc <span style="color: #666666">!=</span> <span style="color: #666666">2</span>)
