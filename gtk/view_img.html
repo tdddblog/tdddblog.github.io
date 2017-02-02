@@ -1,0 +1,209 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+</head>
+
+<body>
+    <div class='siteHeader'>Computer Vision Tutorials</div>
+
+<div style="padding:10px;">
+
+<h1>Read and View Images in GTK+</h1>
+
+<p>
+GTK+ is a cross-platform widget toolkit for creating graphical user interfaces.
+Many Linux desktop environments such as GNOME, Unity, Xfce, are based on GTK+.
+In this tutorial I will use GTK3 C API on Ubuntu 14.04.
+</p>
+
+<h2>CMake</h2>
+
+<p>
+CMake is a cross-platform Makefile generator. If you are not familiar with CMake, you can find many tutorials online.
+Usually you create CMakeLists.txt file and configure your project there. We are going to use the following CMakeLists.txt file.
+</p>
+
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #008000">project</span>(<span style="color: #BA2121">test</span>)
+<span style="color: #008000">cmake_minimum_required</span>(<span style="color: #BA2121">VERSION</span> <span style="color: #BA2121">2.6</span>)
+
+<span style="color: #008000">find_package</span>(<span style="color: #BA2121">PkgConfig</span> <span style="color: #BA2121">REQUIRED</span>)
+
+<span style="color: #008000">pkg_check_modules</span>(<span style="color: #BA2121">GTK</span> <span style="color: #BA2121">REQUIRED</span> <span style="color: #BA2121">gtk+-3.0</span>)
+<span style="color: #008000">include_directories</span>(<span style="color: #666666">${</span><span style="color: #19177C">GTK_INCLUDE_DIRS</span><span style="color: #666666">}</span>)
+<span style="color: #008000">link_directories</span>(<span style="color: #666666">${</span><span style="color: #19177C">GTK_LIBRARY_DIRS</span><span style="color: #666666">}</span>)
+<span style="color: #008000">add_definitions</span>(<span style="color: #666666">${</span><span style="color: #19177C">GTK_CFLAGS_OTHER</span><span style="color: #666666">}</span>)
+
+<span style="color: #008000">add_executable</span>(<span style="color: #BA2121">view_image</span> <span style="color: #BA2121">test.cpp</span>)
+<span style="color: #008000">target_link_libraries</span>(<span style="color: #BA2121">view_image</span> <span style="color: #666666">${</span><span style="color: #19177C">GTK_LIBRARIES</span><span style="color: #666666">}</span>)
+</pre>
+</div>
+
+
+<h2>Reading an Image File</h2>
+
+<p>
+To read an image from a file, you can use <b>gdk_pixbuf_new_from_file()</b> API. It takes two parameters, a path to an image file, such as test.jpg, and GError structure. 
+Many common image formats, such as JPG or PNG are supported. The image is decompressed and its raster data is returned in GdkPixbuf structure.
+Usually raster data is stored in RGB or RGBA format.
+</p>
+
+<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%">GdkPixbuf <span style="color: #666666">*</span> <span style="color: #0000FF">read_image</span>(<span style="color: #008000; font-weight: bold">const</span> <span style="color: #B00040">char</span><span style="color: #666666">*</span> name)
+{
+    GError <span style="color: #666666">*</span>err <span style="color: #666666">=</span> <span style="color: #008000">NULL</span>; 
+    
+    GdkPixbuf <span style="color: #666666">*</span>buf <span style="color: #666666">=</span> gdk_pixbuf_new_from_file(name, <span style="color: #666666">&amp;</span>err);
+    <span style="color: #008000; font-weight: bold">if</span>(err <span style="color: #666666">!=</span> <span style="color: #008000">NULL</span>)
+    {
+        printf(<span style="color: #BA2121">&quot;Unable to read image: %s</span><span style="color: #BB6622; font-weight: bold">\n</span><span style="color: #BA2121">&quot;</span>, err<span style="color: #666666">-&gt;</span>message);
+        g_error_free(err);
+        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000">NULL</span>;
+    }
+    
+    <span style="color: #008000; font-weight: bold">return</span> buf;
+}
+</pre>
+</div>
+
+
+<h2>Creating an Image Window</h2>
+
+<p>
+First, let's create a top level window, and set its title.
+Next, connect <b>&quot;destroy&quot;</b> signal to <b>gtk_main_quit</b> function. When the image window is closed, the GTK application will quit.
+Finally, create new image widget from Pixbuf and add it to the window.
+</p>
+
+<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%">GtkWidget <span style="color: #666666">*</span> <span style="color: #0000FF">create_window</span>(GdkPixbuf <span style="color: #666666">*</span> buf)
+{
+    GtkWidget <span style="color: #666666">*</span> window <span style="color: #666666">=</span> gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), <span style="color: #BA2121">&quot;Test&quot;</span>);
+    g_signal_connect_swapped(G_OBJECT(window), <span style="color: #BA2121">&quot;destroy&quot;</span>, 
+            G_CALLBACK(gtk_main_quit), <span style="color: #008000">NULL</span>);
+    
+    GtkWidget <span style="color: #666666">*</span>img <span style="color: #666666">=</span> gtk_image_new_from_pixbuf(buf);
+    gtk_container_add(GTK_CONTAINER(window), img);
+    
+    <span style="color: #008000; font-weight: bold">return</span> window;
+}
+</pre></div>
+
+
+<h2>Main Function</h2>
+
+<p>
+In the main function, we get an image file name from arguments, read the image and display it in a window.
+</p>
+
+<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #B00040">int</span> <span style="color: #0000FF">main</span>(<span style="color: #B00040">int</span> argc, <span style="color: #008000; font-weight: bold">const</span> <span style="color: #B00040">char</span><span style="color: #666666">*</span> argv[])
+{
+    <span style="color: #008000; font-weight: bold">if</span>(argc <span style="color: #666666">!=</span> <span style="color: #666666">2</span>)
+    {
+        printf(<span style="color: #BA2121">&quot;Usage: %s &lt;image file path&gt;</span><span style="color: #BB6622; font-weight: bold">\n</span><span style="color: #BA2121">&quot;</span>, argv[<span style="color: #666666">0</span>]);
+        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">-1</span>;
+    }
+    
+    gtk_init(<span style="color: #666666">0</span>, <span style="color: #008000">NULL</span>);
+    
+    GdkPixbuf <span style="color: #666666">*</span> buf <span style="color: #666666">=</span> read_image(argv[<span style="color: #666666">1</span>]);
+    <span style="color: #008000; font-weight: bold">if</span>(buf <span style="color: #666666">==</span> <span style="color: #008000">NULL</span>) <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">-1</span>;
+
+    GtkWidget <span style="color: #666666">*</span> window <span style="color: #666666">=</span> create_window(buf);
+    g_object_unref(buf);
+        
+    gtk_widget_show_all(window);
+    gtk_main(); 
+
+    <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">0</span>;
+}
+</pre></div>
+
+
+<h2>Resizing the Image</h2>
+
+<p>
+If an image size is greater than the screen resolution it will not fit on the screen. Let's fix that.
+The following function scales an image if its width is greater than max_width or its height is greater than max_height.
+The function preserves the image aspect ratio.
+We call <b>gdk_pixbuf_scale_simple</b> API to scale the GdkPixbuf. 
+The <b>GDK_INTERP_BILINEAR</b> parameter is used for bilinear interpolation.
+</p>
+
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%">GdkPixbuf <span style="color: #666666">*</span> <span style="color: #0000FF">resize_image</span>(GdkPixbuf <span style="color: #666666">*</span> buf, <span style="color: #B00040">int</span> max_width, <span style="color: #B00040">int</span> max_height)
+{
+    <span style="color: #B00040">int</span> width <span style="color: #666666">=</span> gdk_pixbuf_get_width(buf);
+    <span style="color: #B00040">int</span> height <span style="color: #666666">=</span> gdk_pixbuf_get_height(buf);
+
+    printf(<span style="color: #BA2121">&quot;Original size: (%d, %d)</span><span style="color: #BB6622; font-weight: bold">\n</span><span style="color: #BA2121">&quot;</span>, width, height);
+
+    <span style="color: #B00040">float</span> r_w <span style="color: #666666">=</span> width <span style="color: #666666">/</span> (<span style="color: #B00040">float</span>)max_width;
+    <span style="color: #B00040">float</span> r_h <span style="color: #666666">=</span> height <span style="color: #666666">/</span> (<span style="color: #B00040">float</span>)max_height;
+
+    <span style="color: #B00040">float</span> max_r <span style="color: #666666">=</span> std<span style="color: #666666">::</span>max(r_w, r_h);
+
+    <span style="color: #008000; font-weight: bold">if</span>(max_r <span style="color: #666666">&gt;</span> <span style="color: #666666">1</span>)
+    {
+        <span style="color: #B00040">int</span> new_width <span style="color: #666666">=</span> width <span style="color: #666666">/</span> max_r;
+        <span style="color: #B00040">int</span> new_height <span style="color: #666666">=</span> height <span style="color: #666666">/</span> max_r;
+        
+        printf(<span style="color: #BA2121">&quot;Resized: (%d, %d)</span><span style="color: #BB6622; font-weight: bold">\n</span><span style="color: #BA2121">&quot;</span>, new_width, new_height);
+        
+        GdkPixbuf <span style="color: #666666">*</span> new_buf <span style="color: #666666">=</span> gdk_pixbuf_scale_simple(buf, 
+                new_width, new_height, GDK_INTERP_BILINEAR);
+        g_object_unref(buf);
+        
+        <span style="color: #008000; font-weight: bold">return</span> new_buf;
+    }
+    <span style="color: #008000; font-weight: bold">else</span>
+    {
+        <span style="color: #008000; font-weight: bold">return</span> buf;
+    }
+}
+</pre></div>
+
+<p>
+We also have to fix the main function. Add <b>resize_image()</b> function before <b>create_window()</b>:
+</p>
+
+
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #B00040">int</span> <span style="color: #0000FF">main</span>(<span style="color: #B00040">int</span> argc, <span style="color: #008000; font-weight: bold">const</span> <span style="color: #B00040">char</span><span style="color: #666666">*</span> argv[])
+{
+    <span style="color: #008000; font-weight: bold">if</span>(argc <span style="color: #666666">!=</span> <span style="color: #666666">2</span>)
+    {
+        printf(<span style="color: #BA2121">&quot;Usage: %s &lt;image file path&gt;</span><span style="color: #BB6622; font-weight: bold">\n</span><span style="color: #BA2121">&quot;</span>, argv[<span style="color: #666666">0</span>]);
+        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">-1</span>;
+    }
+    
+    gtk_init(<span style="color: #666666">0</span>, <span style="color: #008000">NULL</span>);
+    
+    GdkPixbuf <span style="color: #666666">*</span> buf <span style="color: #666666">=</span> read_image(argv[<span style="color: #666666">1</span>]);
+    <span style="color: #008000; font-weight: bold">if</span>(buf <span style="color: #666666">==</span> <span style="color: #008000">NULL</span>) <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">-1</span>;
+
+    buf <span style="color: #666666">=</span> resize_image(buf, MAX_WIDTH, MAX_HEIGHT);
+
+    GtkWidget <span style="color: #666666">*</span> window <span style="color: #666666">=</span> create_window(buf);
+    g_object_unref(buf);
+        
+    gtk_widget_show_all(window);
+    gtk_main(); 
+
+    <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">0</span>;
+}
+</pre></div>
+
+<p>
+The source code of this tutorial is available on <a href="https://github.com/tdddblog/gtk_tutorials/tree/master/img_view" target="_blank">GitHub</a>
+</p>
+
+</body>
+
+</html>
